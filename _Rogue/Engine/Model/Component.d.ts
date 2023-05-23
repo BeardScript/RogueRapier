@@ -43,7 +43,7 @@ export default class Component extends Lifecycle {
     private serializeInterfaceRefs;
     private loadInterfaceRefs;
     private readyNotifier;
-    loadPropRef(interfaceRefs: Object, key: string | number, object: Object, readyProps: Object, propGI: string, actualProp?: string): void;
+    private loadPropRef;
     awake(): void;
     start(): void;
     beforeUpdate(): void;
@@ -55,8 +55,8 @@ export default class Component extends Lifecycle {
     onObjectRemoved(): void;
     onDisabled(): void;
 }
-declare type ComponentInterfaceType = 'String' | 'Number' | 'Boolean' | 'Select' | 'Vector2' | 'Vector3' | 'Object3D' | 'Prefab' | 'Texture' | 'Material' | 'Component' | 'Audio' | 'Color' | 'PositionalAudio' | 'AnimationClip' | 'Button' | 'Data' | 'Code';
-export declare type ComponentInterface = {
+type ComponentInterfaceType = 'String' | 'Number' | 'Boolean' | 'Select' | 'Vector2' | 'Vector3' | 'Object3D' | 'Prefab' | 'Texture' | 'Material' | 'Component' | 'Audio' | 'Color' | 'PositionalAudio' | 'AnimationClip' | 'Button' | 'Data' | 'Code';
+export type ComponentInterface = {
     [propName: string]: ComponentInterfaceType | {
         type: ComponentInterfaceType;
         options?: any;

@@ -14,7 +14,7 @@ export default class RapierBall extends RapierCollider {
     const maxSide = Math.max(this.worldScale.x, this.worldScale.y, this.worldScale.z);
 
     let colliderDesc = RAPIER.ColliderDesc.ball(this.radiusOffset + maxSide);
-    this.collider = RogueRapier.world.createCollider(colliderDesc, this.body.handle);
+    this.collider = RogueRapier.world.createCollider(colliderDesc, this.body);
   }
 }
 

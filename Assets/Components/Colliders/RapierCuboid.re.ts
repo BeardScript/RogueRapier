@@ -18,7 +18,7 @@ export default class RapierCuboid extends RapierCollider {
       this.sizeOffset.z * (this.worldScale.z/2)
     );
 
-    this.collider = RogueRapier.world.createCollider(colliderDesc, this.body.handle);
+    this.collider = RogueRapier.world.createCollider(colliderDesc, this.body);
   }
 }
 
