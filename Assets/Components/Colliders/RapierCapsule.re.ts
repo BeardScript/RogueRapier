@@ -16,7 +16,7 @@ export default class RapierCapsule extends RapierCollider {
     const maxSide = Math.max(this.worldScale.x, this.worldScale.z);
 
     let colliderDesc = RAPIER.ColliderDesc.capsule(this.halfHeight * this.worldScale.y, this.radius * maxSide);
-    this.collider = RogueRapier.world.createCollider(colliderDesc, this.body.handle);
+    this.collider = RogueRapier.world.createCollider(colliderDesc, this.body);
   }
 }
 

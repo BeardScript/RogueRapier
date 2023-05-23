@@ -84,6 +84,7 @@ module.exports = {
     alias: {
       "Assets": resolve("Assets"),
       "rogue-engine": resolve("_Rogue/rogue-engine"),
+      "@RE": path.join(__dirname, './Assets/rogue_packages')
     },
     fallback: { "path": false, "fs": false }
   },

@@ -1,7 +1,7 @@
 import { Object3D, Material, Texture, AnimationClip } from 'three';
 import { AudioAsset } from '../Model/AudioAsset';
-import SceneController from '../Model/SceneController';
-declare type AssetConfig = {
+import type SceneController from '../Model/SceneController';
+type AssetConfig = {
     preload?: boolean;
     keepLoaded?: boolean;
     override?: boolean;
@@ -14,7 +14,7 @@ declare class AssetManagerClass {
     private _objectLoader;
     sceneController: SceneController;
     get assets(): {
-        [uuid: string]: Object3D<import("three").Event> | Texture | Material | AnimationClip | AudioAsset;
+        [uuid: string]: Object3D<import("three").Event> | Material | Texture | AnimationClip | AudioAsset;
     };
     get assetConfigs(): {
         [uuid: string]: AssetConfig;
@@ -64,11 +64,11 @@ declare class AssetManagerClass {
     setAssetPaths(paths: {
         [uuid: string]: string;
     }): void;
-    getAssetPath(uuid: string): string | undefined;
+    getAssetPath(uuid: string): any;
     registerAsset(asset: Object3D | AudioAsset | Material | Texture | AnimationClip): void;
-    loadAsset(uuid: string): Promise<Object3D<import("three").Event> | Texture | Material | AnimationClip | AudioAsset | undefined>;
+    loadAsset(uuid: string): Promise<Object3D<import("three").Event> | Material | Texture | AnimationClip | AudioAsset | undefined>;
     private getExtension;
-    getAsset(uuid: string): Object3D<import("three").Event> | Texture | Material | AnimationClip | AudioAsset;
+    getAsset(uuid: string): Object3D<import("three").Event> | Material | Texture | AnimationClip | AudioAsset;
     loadObject(assetPath: string): Promise<Object3D>;
     private loadObjectFunction;
     private loadNestedPrefabs;

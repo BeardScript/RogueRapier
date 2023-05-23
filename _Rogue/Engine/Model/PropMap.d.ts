@@ -1,8 +1,8 @@
-import Component from './Component';
-import { propType } from '../Controller/Decorators';
-import * as THREE from 'three';
-import { Prefab } from './Prefab';
-declare type PropMapValue = string | number | boolean | THREE.Material | THREE.Object3D | THREE.AnimationClip | THREE.Audio | THREE.PositionalAudio | THREE.Color | THREE.Texture | THREE.Vector2 | THREE.Vector3 | Prefab;
+import type Component from './Component';
+import type { propType } from '../Controller/Decorators';
+import type * as THREE from 'three';
+import type { Prefab } from './Prefab';
+type PropMapValue = string | number | boolean | THREE.Material | THREE.Object3D | THREE.AnimationClip | THREE.Audio | THREE.PositionalAudio | THREE.Color | THREE.Texture | THREE.Vector2 | THREE.Vector3 | Prefab;
 export declare class PropMap {
     config: {
         name: string;
