@@ -5,7 +5,21 @@ import RogueRapier from '../../Lib/RogueRapier';
 import RapierCollider from './RapierCollider';
 
 export default class RapierBall extends RapierCollider {
-  @RE.props.num() radiusOffset: number = 0;
+  private _radiusOffset = 0;
+
+  @RE.props.num()
+  get radiusOffset() {
+    return this._radiusOffset;
+  }
+
+  set radiusOffset(value: number) {
+    const oldValue = this._radiusOffset;
+    this._radiusOffset = value;
+    if (oldValue !== value && this.collider && RogueRapier.world) {
+      RogueRapier.world.removeCollider(this.collider, false);
+      this.init();
+    }
+  }
 
   worldScale = new THREE.Vector3();
 

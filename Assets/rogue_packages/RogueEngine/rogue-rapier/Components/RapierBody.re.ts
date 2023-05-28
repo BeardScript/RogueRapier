@@ -3,6 +3,8 @@ import * as RE from 'rogue-engine';
 import * as THREE from 'three';
 import RogueRapier from '../Lib/RogueRapier';
 
+export type RapierCollisionInfo = {ownCollider: RAPIER.Collider, otherCollider: RAPIER.Collider, otherBody: RapierBody};
+
 export default class RapierBody extends RE.Component {
   @RE.props.select() type = 0;
   typeOptions = ["Dynamic", "Fixed", "KinematicPositionBased", "KinematicVelocityBased"];
@@ -16,6 +18,7 @@ export default class RapierBody extends RE.Component {
 
   set gravityScale(value: number) {
     this._gravityScale = value;
+    RE.Runtime.isRunning && 
     this.body && (this.body.setGravityScale(value, true));
   }
   
@@ -27,6 +30,7 @@ export default class RapierBody extends RE.Component {
 
   set angularDamping(value: number) {
     this._angularDamping = value;
+    RE.Runtime.isRunning && 
     this.body && (this.body.setAngularDamping(value));
   }
 
@@ -39,6 +43,7 @@ export default class RapierBody extends RE.Component {
 
   set linearDamping(value: number) {
     this._linearDamping = value;
+    RE.Runtime.isRunning && 
     this.body && (this.body.setLinearDamping(value));
   }
 
@@ -50,7 +55,8 @@ export default class RapierBody extends RE.Component {
 
   set xTranslation(value: boolean) {
     this._xTranslation = value;
-    this.body && (this.body.restrictTranslations(value, this._yTranslation, this._zTranslation, true));
+    RE.Runtime.isRunning && 
+    this.body && (this.body.setEnabledTranslations(value, this._yTranslation, this._zTranslation, true));
   }
 
   private _yTranslation = true;
@@ -61,7 +67,8 @@ export default class RapierBody extends RE.Component {
 
   set yTranslation(value: boolean) {
     this._yTranslation = value;
-    this.body && (this.body.restrictTranslations(this._xTranslation, value, this._zTranslation, true));
+    RE.Runtime.isRunning && 
+    this.body && (this.body.setEnabledTranslations(this._xTranslation, value, this._zTranslation, true));
   }
 
   private _zTranslation = true;
@@ -72,7 +79,8 @@ export default class RapierBody extends RE.Component {
 
   set zTranslation(value: boolean) {
     this._zTranslation = value;
-    this.body && (this.body.restrictTranslations(this._xTranslation, this._yTranslation, value, true));
+    RE.Runtime.isRunning && 
+    this.body && (this.body.setEnabledTranslations(this._xTranslation, this._yTranslation, value, true));
   }
 
   private _xRotation = true;
@@ -83,7 +91,8 @@ export default class RapierBody extends RE.Component {
 
   set xRotation(value: boolean) {
     this._xRotation = value;
-    this.body && (this.body.restrictRotations(value, this._yRotation, this._zRotation, true));
+    RE.Runtime.isRunning && 
+    this.body && (this.body.setEnabledRotations(value, this._yRotation, this._zRotation, true));
   }
 
   private _yRotation = true;
@@ -94,7 +103,8 @@ export default class RapierBody extends RE.Component {
 
   set yRotation(value: boolean) {
     this._yRotation = value;
-    this.body && (this.body.restrictRotations(this._xRotation, value, this._zRotation, true));
+    RE.Runtime.isRunning && 
+    this.body && (this.body.setEnabledRotations(this._xRotation, value, this._zRotation, true));
   }
 
   private _zRotation = true;
@@ -105,11 +115,15 @@ export default class RapierBody extends RE.Component {
 
   set zRotation(value: boolean) {
     this._zRotation = value;
-    this.body && (this.body.restrictTranslations(this._xRotation, this._yRotation, value, true));
+    RE.Runtime.isRunning && 
+    this.body && (this.body.setEnabledRotations(this._xRotation, this._yRotation, value, true));
   }
 
   body: RAPIER.RigidBody;
   initialized = false;
+
+  onCollisionStart: (info: RapierCollisionInfo) => void = () => {};
+  onCollisionEnd: (info: RapierCollisionInfo) => void = () => {};
 
   private newPos = new THREE.Vector3();
   private newRot = new THREE.Quaternion();
@@ -120,22 +134,25 @@ export default class RapierBody extends RE.Component {
   init() {
     let rigidBodyDesc = this.getType();
 
-    const pos = this.object3d.position;
-    const rot = this.object3d.quaternion;
+    // const pos = this.object3d.position;
+    // const rot = this.object3d.quaternion;
+
+    this.object3d.getWorldPosition(this.newPos);
+    this.object3d.getWorldQuaternion(this.newRot);
   
     rigidBodyDesc
     .setGravityScale(this._gravityScale)
-    .setTranslation(pos.x, pos.y, pos.z)
-    .setRotation(rot)
+    .setTranslation(this.newPos.x, this.newPos.y, this.newPos.z)
+    .setRotation(this.newRot)
     .setAngularDamping(this._angularDamping)
     .setLinearDamping(this._linearDamping)
-    .restrictRotations(this._xRotation, this._yRotation, this._zRotation)
-    .restrictTranslations(this._xTranslation, this._yTranslation, this._zTranslation);
+    .enabledRotations(this._xRotation, this._yRotation, this._zRotation)
+    .enabledTranslations(this._xTranslation, this._yTranslation, this._zTranslation);
 
     rigidBodyDesc.mass = this.mass;
 
     this.body = RogueRapier.world.createRigidBody(rigidBodyDesc);
-
+    this.body.userData = {object3d: this.object3d.uuid};
     this.initialized = true;
   }
 

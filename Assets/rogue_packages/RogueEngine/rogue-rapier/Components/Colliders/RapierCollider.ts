@@ -16,6 +16,9 @@ export default abstract class RapierCollider extends RE.Component {
   localRot = new THREE.Quaternion();
   worldQuaternion = new THREE.Quaternion();
 
+  @RE.props.checkbox() isSensor = false;
+  @RE.props.checkbox() collisionEvents = false;
+
   private matrixA = new THREE.Matrix4();
   private matrixB = new THREE.Matrix4();
   private matrixC = new THREE.Matrix4();
@@ -44,13 +47,16 @@ export default abstract class RapierCollider extends RE.Component {
 
     this.createShape();
 
+    this.collider.setSensor(this.isSensor);
+    this.collisionEvents && this.collider.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS);
+
     this.setColliderPos();
     this.setColliderRot();
 
     this.initialized = true;
   }
 
-  private setColliderPos() {
+  setColliderPos() {
     this.object3d.updateWorldMatrix(true, true);
     this.object3d.getWorldPosition(this.worldPos);
     this.localPos.copy(this.worldPos);
@@ -60,7 +66,7 @@ export default abstract class RapierCollider extends RE.Component {
     this.collider.setTranslationWrtParent(this.localPos);
   }
 
-  private setColliderRot() {
+  setColliderRot() {
     this.object3d.updateWorldMatrix(true, true);
     this.object3d.getWorldQuaternion(this.worldQuaternion);
 
@@ -87,7 +93,7 @@ export default abstract class RapierCollider extends RE.Component {
     RogueRapier.world.removeCollider(this.collider, false);
   }
 
-  private getBodyComponent(object3d: THREE.Object3D): RapierBody | undefined {
+  getBodyComponent(object3d: THREE.Object3D): RapierBody | undefined {
     const bodyComponent = RE.getComponent(RapierBody, object3d);
 
     if (bodyComponent) {
