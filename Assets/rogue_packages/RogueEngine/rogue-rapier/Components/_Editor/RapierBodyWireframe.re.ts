@@ -65,6 +65,7 @@ export default class RapierBodyWireframe extends RE.Component {
 
   resetComponents() {
     this.selectedObjects.forEach(selected => {
+      if (!selected) return;
       selected.traverse(object => {
         const objComponents = RE.components[object.uuid];
 
@@ -86,8 +87,8 @@ export default class RapierBodyWireframe extends RE.Component {
     const selectedObjects = window["rogue-editor"].Project.selectedObjects as THREE.Object3D[];
 
     if (!this.arraysAreEqual(selectedObjects, this.selectedObjects)) {
-      this.resetComponents();
       this.selectedObjects = selectedObjects.slice(0);
+      this.resetComponents();
       this.setupImpostors();
     }
 
