@@ -1,6 +1,6 @@
 import * as RE from 'rogue-engine';
-import RogueRapier from '../Lib/RogueRapier';
-import RapierBody from './RapierBody.re';
+import RogueRapier from '@RE/RogueEngine/rogue-rapier/Lib/RogueRapier';
+import RapierBody from '@RE/RogueEngine/rogue-rapier/Components/RapierBody.re';
 
 export default class Jump extends RE.Component {
 
