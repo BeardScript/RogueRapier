@@ -5,10 +5,18 @@ export default class RogueRapier {
   static eventQueue: RAPIER.EventQueue;
   static initialized = false;
 
-  static async init() {
+  static init() {
+    this.initialized = false;
+    const done = this.doInit();
+
+    return {onDone: done.then};
+  }
+
+  private static async doInit() {
     await RAPIER.init();
     this.world = new RAPIER.World({x: 0, y: -9.81, z: 0});
-    this.eventQueue = new RAPIER.EventQueue(true);
+    this.eventQueue && this.eventQueue.clear();
+    this.eventQueue = this.eventQueue || new RAPIER.EventQueue(true);
     this.initialized = true;
   }
 }

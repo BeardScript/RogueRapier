@@ -8,7 +8,7 @@ export default class RapierConfig extends RE.Component {
   @RE.props.vector3() gravity = new THREE.Vector3(0, -9.81, 0);
 
   awake() {
-    RogueRapier.init().then(() => {
+    RogueRapier.init().onDone(() => {
       RogueRapier.world.gravity = this.gravity;
     });
   }
