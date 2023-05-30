@@ -7,14 +7,53 @@ import RAPIER from '@dimforge/rapier3d-compat';
 export default class RapierConfig extends RE.Component {
   @RE.props.vector3() gravity = new THREE.Vector3(0, -9.81, 0);
 
+  private _debug = false;
+
+  @RE.props.checkbox()  get debug() {return this._debug}
+
+  set debug(value: boolean) {
+    this._debug = value;
+
+    RE.Runtime.isRunning && value ? 
+    RE.App.currentScene.add(this.lines) : 
+    RE.App.currentScene.remove(this.lines)
+  }
+
+  lines = new THREE.LineSegments(
+    new THREE.BufferGeometry(),
+    new THREE.LineBasicMaterial({ color: new THREE.Color("#00FF00") })
+  );
+
   awake() {
-    RogueRapier.init().onDone(() => {
+    this.lines.name = "Rapier Debug Lines";
+
+    RogueRapier.init(() => {
       RogueRapier.world.gravity = this.gravity;
     });
   }
 
-  update() {
+  start() {
+    if (this.debug) {
+      RE.App.currentScene.add(this.lines);
+    }
+  }
+
+  beforeUpdate() {
     if (!RogueRapier.initialized) return;
+
+    if (this.debug) {
+      let buffers = RogueRapier.world.debugRender();
+
+      this.lines.geometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(buffers.vertices, 3),
+      );
+  
+      this.lines.geometry.setAttribute(
+        "color",
+        new THREE.BufferAttribute(buffers.colors, 4),
+      );
+    }
 
     RogueRapier.world.step(RogueRapier.eventQueue);
 

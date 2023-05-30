@@ -19,10 +19,6 @@ export default abstract class RapierCollider extends RE.Component {
   @RE.props.checkbox() isSensor = false;
   @RE.props.checkbox() collisionEvents = false;
 
-  private matrixA = new THREE.Matrix4();
-  private matrixB = new THREE.Matrix4();
-  private matrixC = new THREE.Matrix4();
-
   static findByShape(shape: RAPIER.Collider) {
     let shapeComponent: undefined | RapierCollider;
 
@@ -59,30 +55,24 @@ export default abstract class RapierCollider extends RE.Component {
   setColliderPos() {
     this.object3d.updateWorldMatrix(true, true);
     this.object3d.getWorldPosition(this.worldPos);
-    this.localPos.copy(this.worldPos);
-    this.bodyComponent.object3d.updateWorldMatrix(true, true);
-    this.bodyComponent.object3d.worldToLocal(this.localPos);
 
-    this.collider.setTranslationWrtParent(this.localPos);
+    this.collider.setTranslation(this.worldPos);
   }
 
   setColliderRot() {
     this.object3d.updateWorldMatrix(true, true);
     this.object3d.getWorldQuaternion(this.worldQuaternion);
 
-    this.matrixA.makeRotationFromQuaternion(this.worldQuaternion);
-    this.object3d.updateWorldMatrix(true, true);
-    this.matrixB.copy(this.bodyComponent.object3d.matrixWorld).invert();
-    this.matrixC.extractRotation(this.matrixB);
-    this.matrixA.premultiply(this.matrixC);
-    this.localRot.setFromRotationMatrix(this.matrixA);
-
-    this.collider.setRotationWrtParent(this.localRot);
+    this.collider.setRotation(this.worldQuaternion);
   }
 
   beforeUpdate(): void {
     if (!RogueRapier.initialized) return;
     if (!this.initialized) this.init();
+    if (!this.collider) return;
+
+    this.setColliderPos();
+    this.setColliderRot();
   }
 
   onDisabled() {

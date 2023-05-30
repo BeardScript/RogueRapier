@@ -103,8 +103,15 @@ export default class RapierBodyWireframe extends RE.Component {
     this.lines.visible = true;
     this.world.step();
 
+    const flagForRemoval: (RapierCollider | RapierBody)[] = [];
+
     this.colliders.forEach(component => {
       if (component instanceof RapierCollider && component.object3d && component.bodyComponent) {
+        if (!component.enabled) {
+          component.initialized = false;
+          flagForRemoval.push(component);
+          return;
+        }
         const pos = component.bodyComponent.object3d.position;
         const rot = component.bodyComponent.object3d.quaternion;
         component.body.setTranslation(new RAPIER.Vector3(pos.x, pos.y, pos.z), false);
@@ -113,6 +120,8 @@ export default class RapierBodyWireframe extends RE.Component {
         component.setColliderPos();
       }
     });
+
+    flagForRemoval.forEach(component => this.colliders.splice(this.colliders.indexOf(component), 1))
 
     let buffers = this.world.debugRender();
 

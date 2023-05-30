@@ -5,11 +5,10 @@ export default class RogueRapier {
   static eventQueue: RAPIER.EventQueue;
   static initialized = false;
 
-  static init() {
+  static init(onDone: () => void) {
     this.initialized = false;
     const done = this.doInit();
-
-    return {onDone: done.then};
+    done.then(() => onDone());
   }
 
   private static async doInit() {
