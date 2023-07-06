@@ -31,6 +31,9 @@ export default class RapierKeyboardInput extends RE.Component {
     if (RE.Input.keyboard.getKeyPressed("KeyD")) {
       this.characterController.movementDirection.z = 1
     }
+    if (RE.Input.keyboard.getKeyPressed("Space")) {
+      this.characterController.movementDirection.y = 1
+    }
   }
 }
 

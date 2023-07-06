@@ -19,6 +19,9 @@ export default class RapierKinematicCharacterController extends RE.Component {
   movementDirection = { x: 0.0, y: -this.speed, z: 0.0 }
   character: RAPIER.RigidBody
 
+  @RE.props.select() type = 0;
+  typeOptions = ["KinematicPositionBased", "KinematicVelocityBased"];
+
   //https://github.com/dimforge/rapier.js/blob/master/testbed3d/src/demos/characterController.ts
   awake() {
   }
@@ -72,6 +75,8 @@ export default class RapierKinematicCharacterController extends RE.Component {
   update() {
     const scaledMovementDirection = new THREE.Vector3(this.movementDirection.x, this.movementDirection.y, this.movementDirection.z)
     scaledMovementDirection.multiplyScalar(this.speed)
+    let gravity = -1
+    scaledMovementDirection.add(new THREE.Vector3(0, gravity, 0))
 
     if (!this.character) {
       RE.Debug.logWarning("No character body")
@@ -83,19 +88,25 @@ export default class RapierKinematicCharacterController extends RE.Component {
       return
     }
 
-    scaledMovementDirection.setY(-this.speed)
-
     this.characterController.computeColliderMovement(
       this.characterCollider,
       scaledMovementDirection,
     )
 
-    let movement = this.characterController.computedMovement()
-    let newPos = this.character.translation()
-    newPos.x += movement.x
-    newPos.y += movement.y
-    newPos.z += movement.z
-    this.character.setNextKinematicTranslation(newPos)
+    switch(this.type) {
+      case 0:
+        let movement = this.characterController.computedMovement()
+        let newPos = this.character.translation()
+        newPos.x += movement.x
+        newPos.y += movement.y
+        newPos.z += movement.z
+        this.character.setNextKinematicTranslation(newPos)
+        break;
+      case 1:
+        let velocity = new RAPIER.Vector3(scaledMovementDirection.x, scaledMovementDirection.y, scaledMovementDirection.z)
+        this.character.setLinvel(velocity, true)
+        break;
+    }
   }
 }
 
