@@ -22,7 +22,7 @@ export default class RapierKinematicCharacterController extends RE.Component {
   @RE.props.num() speed = 0.1
   characterCollider: RAPIER.Collider | undefined
   movementDirection = new THREE.Vector3(0.0, 0.0, 0.0)
-  character: RAPIER.RigidBody
+  rigidBody: RAPIER.RigidBody
 
   @RE.props.select() type = 0;
   typeOptions = ["KinematicPositionBased", "KinematicVelocityBased"];
@@ -45,7 +45,7 @@ export default class RapierKinematicCharacterController extends RE.Component {
     if (!component) {
       RE.Debug.logError("did not find body")
     } else {
-      this.character = component.body
+      this.rigidBody = component.body
 
 
       const colliderComponent = this.getColliderComponentFromAChild(this.object3d)
@@ -83,7 +83,7 @@ export default class RapierKinematicCharacterController extends RE.Component {
 
   update() {
     
-    if (!this.character) {
+    if (!this.rigidBody) {
       RE.Debug.logWarning("No character body")
       return
     }
@@ -102,7 +102,7 @@ export default class RapierKinematicCharacterController extends RE.Component {
     
     playerVelocity.x = scaledMovement.x * this.speed
     playerVelocity.z = scaledMovement.z * this.speed
-    const nextPosition = this.characterCollider.translation()
+    const nextPosition = this.rigidBody.translation()
     const isGrounded = this.characterController.computedGrounded()
    if(isGrounded) {
     RE.Debug.log(`grounded`)
@@ -125,7 +125,7 @@ export default class RapierKinematicCharacterController extends RE.Component {
     // RE.Debug.log(`Moving ${JSON.stringify(playerVelocity)}`)
 
     this.characterController.computeColliderMovement(
-      this.characterCollider,
+      this.rigidBody.collider(0),
       playerVelocity,
     )
 
@@ -135,7 +135,7 @@ export default class RapierKinematicCharacterController extends RE.Component {
     nextPosition.y += characterMovement.y
     nextPosition.z += characterMovement.z
 
-    this.character.setNextKinematicTranslation(nextPosition)
+    this.rigidBody.setNextKinematicTranslation(nextPosition)
 
     
 
