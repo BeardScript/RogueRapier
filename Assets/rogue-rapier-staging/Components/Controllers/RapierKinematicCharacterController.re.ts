@@ -6,11 +6,12 @@ import RogueRapier from '@RE/RogueEngine/rogue-rapier/Lib/RogueRapier'
 import RapierBody from '@RE/RogueEngine/rogue-rapier/Components/RapierBody.re'
 
 export default class RapierKinematicCharacterController extends RE.Component {
+  @RE.props.num() offset = 0.1
   @RE.props.num() autostepMaxHeight = 0.7
   @RE.props.num() autostepMinWidth = 0.3
   @RE.props.checkbox() autostepIncludeDynamicBodies = true
   @RE.props.num() snapToGroundDistance = 0.3
-  @RE.props.num() characterMass = 100
+  @RE.props.num() characterMass = 10
   @RE.props.checkbox() applyImpulsesToDynamicBodies = true
   @RE.props.checkbox() slideEnabled = true
   @RE.props.num() jumpHeight = 10
@@ -72,8 +73,7 @@ export default class RapierKinematicCharacterController extends RE.Component {
   }
 
   init() {
-    const offset = 0.1
-    this.characterController = RogueRapier.world.createCharacterController(offset)
+    this.characterController = RogueRapier.world.createCharacterController(this.offset)
     this.characterController.enableAutostep(this.autostepMaxHeight, this.autostepMinWidth, this.autostepIncludeDynamicBodies)
     this.characterController.enableSnapToGround(this.snapToGroundDistance)
     this.characterController.setCharacterMass(this.characterMass)
@@ -116,7 +116,7 @@ export default class RapierKinematicCharacterController extends RE.Component {
     if (isGrounded && this.movementDirection.y != 0) {
       RE.Debug.log("jumping")
       playerVelocity.y += Math.sqrt(
-        this.jumpHeight * -3 * (gravity * (fixedStep)),
+        this.jumpHeight * 3 * (gravity * (fixedStep)),
       )
     }
 
