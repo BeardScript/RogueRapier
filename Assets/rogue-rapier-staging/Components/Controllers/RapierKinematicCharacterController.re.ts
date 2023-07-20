@@ -9,14 +9,19 @@ export default class RapierKinematicCharacterController extends RE.Component {
   @RE.props.num() autostepMaxHeight = 0.7
   @RE.props.num() autostepMinWidth = 0.3
   @RE.props.checkbox() autostepIncludeDynamicBodies = true
-  @RE.props.num() snapToGroundDistance = 0.7
+  @RE.props.num() snapToGroundDistance = 0.3
+  @RE.props.num() characterMass = 100
+  @RE.props.checkbox() applyImpulsesToDynamicBodies = true
+  @RE.props.checkbox() slideEnabled = true
+  @RE.props.num() jumpHeight = 10
+
 
   initialized = false
   characterController: RAPIER.KinematicCharacterController
 
   @RE.props.num() speed = 0.1
   characterCollider: RAPIER.Collider | undefined
-  movementDirection = { x: 0.0, y: -this.speed, z: 0.0 }
+  movementDirection = new THREE.Vector3(0.0, 0.0, 0.0)
   character: RAPIER.RigidBody
 
   @RE.props.select() type = 0;
@@ -67,17 +72,17 @@ export default class RapierKinematicCharacterController extends RE.Component {
   }
 
   init() {
-    this.characterController = RogueRapier.world.createCharacterController(0.1)
-    this.characterController.enableAutostep(this.autostepMaxHeight, this.autostepMinWidth, this.autostepIncludeDynamicBodies);
-    this.characterController.enableSnapToGround(this.snapToGroundDistance);
+    const offset = 0.1
+    this.characterController = RogueRapier.world.createCharacterController(offset)
+    this.characterController.enableAutostep(this.autostepMaxHeight, this.autostepMinWidth, this.autostepIncludeDynamicBodies)
+    this.characterController.enableSnapToGround(this.snapToGroundDistance)
+    this.characterController.setCharacterMass(this.characterMass)
+    this.characterController.setApplyImpulsesToDynamicBodies(this.applyImpulsesToDynamicBodies)
+    this.characterController.setSlideEnabled(this.slideEnabled)
   }
 
   update() {
-    const scaledMovementDirection = new THREE.Vector3(this.movementDirection.x, this.movementDirection.y, this.movementDirection.z)
-    scaledMovementDirection.multiplyScalar(this.speed)
-    let gravity = -1
-    scaledMovementDirection.add(new THREE.Vector3(0, gravity, 0))
-
+    
     if (!this.character) {
       RE.Debug.logWarning("No character body")
       return
@@ -88,25 +93,66 @@ export default class RapierKinematicCharacterController extends RE.Component {
       return
     }
 
+    const gravity = -9.81
+    const playerVelocity = new THREE.Vector3(0, 0, 0)
+
+    const scaledMovement = new THREE.Vector3(this.movementDirection.x, 0, this.movementDirection.z)
+    scaledMovement.normalize()
+    // RE.Debug.log(`Moving ${JSON.stringify(this.movementDirection)}`)
+    
+    playerVelocity.x = scaledMovement.x * this.speed
+    playerVelocity.z = scaledMovement.z * this.speed
+    const nextPosition = this.characterCollider.translation()
+    const isGrounded = this.characterController.computedGrounded()
+   if(isGrounded) {
+    RE.Debug.log(`grounded`)
+   }
+    if(isGrounded && playerVelocity.y > 0) {
+      playerVelocity.y = 0
+    }
+
+    let fixedStep = RE.Runtime.clock.getDelta() * 100
+    // RE.Debug.log(`${RE.Runtime.clock.getDelta()}`)
+    if (isGrounded && this.movementDirection.y != 0) {
+      RE.Debug.log("jumping")
+      playerVelocity.y += Math.sqrt(
+        this.jumpHeight * -3 * (gravity * (fixedStep)),
+      )
+    }
+
+    playerVelocity.y += gravity * (fixedStep)
+
+    // RE.Debug.log(`Moving ${JSON.stringify(playerVelocity)}`)
+
     this.characterController.computeColliderMovement(
       this.characterCollider,
-      scaledMovementDirection,
+      playerVelocity,
     )
 
-    switch(this.type) {
-      case 0:
-        let movement = this.characterController.computedMovement()
-        let newPos = this.character.translation()
-        newPos.x += movement.x
-        newPos.y += movement.y
-        newPos.z += movement.z
-        this.character.setNextKinematicTranslation(newPos)
-        break;
-      case 1:
-        let velocity = new RAPIER.Vector3(scaledMovementDirection.x, scaledMovementDirection.y, scaledMovementDirection.z)
-        this.character.setLinvel(velocity, true)
-        break;
-    }
+    const characterMovement = this.characterController.computedMovement()
+
+    nextPosition.x += characterMovement.x
+    nextPosition.y += characterMovement.y
+    nextPosition.z += characterMovement.z
+
+    this.character.setNextKinematicTranslation(nextPosition)
+
+    
+
+    // switch(this.type) {
+    //   case 0:
+    //     // let movement = this.characterController.computedMovement()
+    //     // let newPos = this.character.translation()
+    //     // newPos.x += movement.x
+    //     // newPos.y += movement.y
+    //     // newPos.z += movement.z
+    //     // this.character.setNextKinematicTranslation(newPos)
+    //     break;
+    //   case 1:
+    //     let velocity = new RAPIER.Vector3(scaledMovementDirection.x, scaledMovementDirection.y, scaledMovementDirection.z)
+    //     this.character.setLinvel(velocity, true)
+    //     break;
+    // }
   }
 }
 
