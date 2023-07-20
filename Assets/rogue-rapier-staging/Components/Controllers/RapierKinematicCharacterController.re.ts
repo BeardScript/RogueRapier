@@ -107,11 +107,11 @@ export default class RapierKinematicCharacterController extends RE.Component {
    if(isGrounded) {
     RE.Debug.log(`grounded`)
    }
-    if(isGrounded && playerVelocity.y > 0) {
+    if(isGrounded && playerVelocity.y != 0) {
       playerVelocity.y = 0
     }
 
-    let fixedStep = RE.Runtime.clock.getDelta() * 100
+    let fixedStep = RE.Runtime.deltaTime
     // RE.Debug.log(`${RE.Runtime.clock.getDelta()}`)
     if (isGrounded && this.movementDirection.y != 0) {
       RE.Debug.log("jumping")
