@@ -4,23 +4,35 @@ import * as THREE from 'three'
 import RapierCollider from '@RE/RogueEngine/rogue-rapier/Components/Colliders/RapierCollider'
 import RogueRapier from '@RE/RogueEngine/rogue-rapier/Lib/RogueRapier'
 import RapierBody from '@RE/RogueEngine/rogue-rapier/Components/RapierBody.re'
+import RapierConfig from '@RE/RogueEngine/rogue-rapier/Components/RapierConfig.re'
 
 export default class RapierKinematicCharacterController extends RE.Component {
+  @RE.props.num() offset = 0.1
   @RE.props.num() autostepMaxHeight = 0.7
   @RE.props.num() autostepMinWidth = 0.3
   @RE.props.checkbox() autostepIncludeDynamicBodies = true
-  @RE.props.num() snapToGroundDistance = 0.7
+  @RE.props.num() snapToGroundDistance = 0.3
+  @RE.props.num() characterMass = 10
+  @RE.props.checkbox() applyImpulsesToDynamicBodies = true
+  @RE.props.checkbox() slideEnabled = true
+  @RE.props.num() jumpHeight = 10
+  @RE.props.select() type = 0;
+  typeOptions = ["KinematicPositionBased", "KinematicVelocityBased"];
 
+  
   initialized = false
   characterController: RAPIER.KinematicCharacterController
 
   @RE.props.num() speed = 0.1
-  characterCollider: RAPIER.Collider | undefined
-  movementDirection = { x: 0.0, y: -this.speed, z: 0.0 }
-  character: RAPIER.RigidBody
+  characterColliders: RapierCollider[] = []
+  movementDirection = new THREE.Vector3(0.0, 0.0, 0.0)
+  rapierBodyComponent: RapierBody
+  rapierConfig: RapierConfig
 
   //https://github.com/dimforge/rapier.js/blob/master/testbed3d/src/demos/characterController.ts
   awake() {
+    this.rapierConfig = RE.getComponent(RapierConfig) as RapierConfig
+    this.rapierBodyComponent = RE.getComponent(RapierBody, this.object3d) as RapierBody  
   }
 
   start() {
@@ -30,72 +42,89 @@ export default class RapierKinematicCharacterController extends RE.Component {
   beforeUpdate(): void {
     if (!RogueRapier.initialized) return;
     !this.initialized && this.init();
-
-    // this.type !== RAPIER.RigidBodyType.Fixed && 
-    // this.updatePhysics();
-    const component = RE.getComponent(RapierBody, this.object3d);
-    if (!component) {
-      RE.Debug.logError("did not find body")
-    } else {
-      this.character = component.body
-
-
-      const colliderComponent = this.getColliderComponentFromAChild(this.object3d)
-      if (colliderComponent) {
-        this.characterCollider = colliderComponent[0].collider
-      }
-
-    }
-  }
-
-  getColliderComponentFromAChild(object3d) {
-    const rapierColliders: RapierCollider[] = [];
-
-    object3d.traverse(obj => {
-      const components = RE.getObjectComponents(obj);
-
-      components.forEach(comp => {
-        if (comp instanceof RapierCollider) {
-          rapierColliders.push(comp);
-        }
-      })
-    })
-    return rapierColliders
   }
 
   init() {
-    this.characterController = RogueRapier.world.createCharacterController(0.1)
-    this.characterController.enableAutostep(this.autostepMaxHeight, this.autostepMinWidth, this.autostepIncludeDynamicBodies);
-    this.characterController.enableSnapToGround(this.snapToGroundDistance);
+    this.characterController = RogueRapier.world.createCharacterController(this.offset)
+    this.characterController.enableAutostep(this.autostepMaxHeight, this.autostepMinWidth, this.autostepIncludeDynamicBodies)
+    this.characterController.enableSnapToGround(this.snapToGroundDistance)
+    this.characterController.setCharacterMass(this.characterMass)
+    this.characterController.setApplyImpulsesToDynamicBodies(this.applyImpulsesToDynamicBodies)
+    this.characterController.setSlideEnabled(this.slideEnabled)
   }
 
   update() {
-    const scaledMovementDirection = new THREE.Vector3(this.movementDirection.x, this.movementDirection.y, this.movementDirection.z)
-    scaledMovementDirection.multiplyScalar(this.speed)
-
-    if (!this.character) {
+    if (!this.rapierBodyComponent.body) {
       RE.Debug.logWarning("No character body")
       return
     }
 
-    if (!this.characterCollider) {
+    if (this.rapierBodyComponent.body.numColliders() < 1) {
       RE.Debug.logWarning("No character collider")
       return
     }
 
-    scaledMovementDirection.setY(-this.speed)
+
+    switch (this.type) {
+      case 0:
+        this.handleKinematicPositionBased()
+        break;
+      case 1:
+        this.handleKinematicVelocityBased()
+        break;
+    }
+  }
+
+  handleKinematicPositionBased() {
+    
+    const gravity = this.rapierConfig.gravity
+    const fixedStep = RE.Runtime.deltaTime
+
+    const playerVelocity = new THREE.Vector3(0, 0, 0)
+
+    const scaledMovement = new THREE.Vector3(this.movementDirection.x, 0, this.movementDirection.z)
+    scaledMovement.normalize()
+
+    playerVelocity.x = scaledMovement.x * this.speed
+    playerVelocity.z = scaledMovement.z * this.speed
+    const nextPosition = this.rapierBodyComponent.body.translation()
+    const isGrounded = this.characterController.computedGrounded()
+
+    if (isGrounded) {
+      RE.Debug.log(`grounded`)
+    }
+
+    if (isGrounded && playerVelocity.y != 0) {
+      playerVelocity.y = 0
+    }
+
+    if (isGrounded && this.movementDirection.y != 0) {
+      RE.Debug.log("jumping")
+      playerVelocity.y += Math.sqrt(
+        this.jumpHeight * 3 * (gravity.y * fixedStep),
+      )
+    }
+
+    playerVelocity.x += gravity.x * fixedStep
+    playerVelocity.y += gravity.y * fixedStep
+    playerVelocity.z += gravity.z * fixedStep
 
     this.characterController.computeColliderMovement(
-      this.characterCollider,
-      scaledMovementDirection,
+      this.rapierBodyComponent.body.collider(0),
+      playerVelocity,
     )
 
-    let movement = this.characterController.computedMovement()
-    let newPos = this.character.translation()
-    newPos.x += movement.x
-    newPos.y += movement.y
-    newPos.z += movement.z
-    this.character.setNextKinematicTranslation(newPos)
+    const characterMovement = this.characterController.computedMovement()
+
+    nextPosition.x += characterMovement.x
+    nextPosition.y += characterMovement.y
+    nextPosition.z += characterMovement.z
+
+    this.rapierBodyComponent.body.setNextKinematicTranslation(nextPosition)
+  }
+
+  handleKinematicVelocityBased() {
+    RE.Debug.logError("Does not support Kinematic Velocity at this time.")
   }
 }
 
