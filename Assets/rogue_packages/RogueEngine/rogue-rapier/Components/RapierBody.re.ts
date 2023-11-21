@@ -10,7 +10,7 @@ export default class RapierBody extends RE.Component {
   typeOptions = ["Dynamic", "Fixed", "KinematicPositionBased", "KinematicVelocityBased"];
   @RE.props.num() mass = 1;
 
-  private _gravityScale = 1;
+  protected _gravityScale = 1;
   @RE.props.num()
   get gravityScale() {
     return this._gravityScale;
@@ -22,7 +22,7 @@ export default class RapierBody extends RE.Component {
     this.body && (this.body.setGravityScale(value, true));
   }
   
-  private _angularDamping = 0;
+  protected _angularDamping = 0;
   @RE.props.num() 
   get angularDamping() {
     return this._angularDamping;
@@ -34,7 +34,7 @@ export default class RapierBody extends RE.Component {
     this.body && (this.body.setAngularDamping(value));
   }
 
-  private _linearDamping = 0;
+  protected _linearDamping = 0;
   @RE.props.num()
   get linearDamping() {
     this.body
@@ -47,7 +47,7 @@ export default class RapierBody extends RE.Component {
     this.body && (this.body.setLinearDamping(value));
   }
 
-  private _xTranslation = true;
+  protected _xTranslation = true;
   @RE.props.checkbox() 
   get xTranslation() {
     return this._xTranslation;
@@ -59,7 +59,7 @@ export default class RapierBody extends RE.Component {
     this.body && (this.body.setEnabledTranslations(value, this._yTranslation, this._zTranslation, true));
   }
 
-  private _yTranslation = true;
+  protected _yTranslation = true;
   @RE.props.checkbox() 
   get yTranslation() {
     return this._yTranslation;
@@ -71,7 +71,7 @@ export default class RapierBody extends RE.Component {
     this.body && (this.body.setEnabledTranslations(this._xTranslation, value, this._zTranslation, true));
   }
 
-  private _zTranslation = true;
+  protected _zTranslation = true;
   @RE.props.checkbox() 
   get zTranslation() {
     return this._zTranslation;
@@ -83,7 +83,7 @@ export default class RapierBody extends RE.Component {
     this.body && (this.body.setEnabledTranslations(this._xTranslation, this._yTranslation, value, true));
   }
 
-  private _xRotation = true;
+  protected _xRotation = true;
   @RE.props.checkbox() 
   get xRotation() {
     return this._xRotation;
@@ -95,7 +95,7 @@ export default class RapierBody extends RE.Component {
     this.body && (this.body.setEnabledRotations(value, this._yRotation, this._zRotation, true));
   }
 
-  private _yRotation = true;
+  protected _yRotation = true;
   @RE.props.checkbox() 
   get yRotation() {
     return this._yRotation;
@@ -107,7 +107,7 @@ export default class RapierBody extends RE.Component {
     this.body && (this.body.setEnabledRotations(this._xRotation, value, this._zRotation, true));
   }
 
-  private _zRotation = true;
+  protected _zRotation = true;
   @RE.props.checkbox() 
   get zRotation() {
     return this._zRotation;
@@ -161,6 +161,18 @@ export default class RapierBody extends RE.Component {
     else if (Number(this.type) === 2) return RAPIER.RigidBodyDesc.kinematicPositionBased();
     else if (Number(this.type) === 3) return RAPIER.RigidBodyDesc.kinematicVelocityBased();
     else return RAPIER.RigidBodyDesc.dynamic();
+  }
+
+  onBeforeRemoved(): void {
+    if (this.body) {
+      RogueRapier.world.removeRigidBody(this.body);
+    }
+  }
+
+  onDisabled(): void {
+    if (this.body) {
+      RogueRapier.world.removeRigidBody(this.body);
+    }
   }
 
   beforeUpdate(): void {

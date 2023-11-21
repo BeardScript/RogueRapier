@@ -1,5 +1,5 @@
 import * as RE from 'rogue-engine';
-import RapierKinematicCharacterController from './RapierKinematicCharacterController.re';
+import RapierKinematicCharacterController from '@RE/RogueEngine/rogue-rapier/Components/RapierKinematicCharacterController.re';
 
 export default class RapierKeyboardInput extends RE.Component {
   characterController: RapierKinematicCharacterController
