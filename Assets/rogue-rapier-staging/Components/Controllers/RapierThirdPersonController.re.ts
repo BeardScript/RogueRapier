@@ -12,7 +12,7 @@ export default class RapierThirdPersonController extends RE.Component {
   @RE.props.checkbox() turnWithCamera = false;
   @RE.props.checkbox() lockCamVertical = false;
   @RE.props.checkbox() lockCamHorizontal = false;
-  @RE.props.vector3() cameraOffset = new THREE.Vector3(0, 10, 10);
+  @RE.props.vector3() cameraOffset = new THREE.Vector3(0, 2, 5);
   @RE.props.num() cameraHeight = 1;
   @RE.props.num() minPolarAngle = -60;
   @RE.props.num() maxPolarAngle = 70;
