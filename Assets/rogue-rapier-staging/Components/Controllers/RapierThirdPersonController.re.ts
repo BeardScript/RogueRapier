@@ -20,8 +20,9 @@ export default class RapierThirdPersonController extends RE.Component {
   @RE.props.num() far = 500;
   @RE.props.num() fov = 50;
   @RE.props.num() gamepadIndex = 0;
-  @RE.props.num(0, 1) axisSensitivity = 0.5;
-  @RE.props.num(0, 1) mouseSensitivity = 0.4;
+  @RE.props.num(0, 1) hAxisSensitivity = 0.5;
+  @RE.props.num(0, 1) vAxisSensitivity = 0.2;
+  @RE.props.num(0, 1) mouseSensitivity = 0.5;
   
   cameraHandle = new THREE.Object3D();
   camera = new THREE.PerspectiveCamera();
@@ -166,7 +167,7 @@ export default class RapierThirdPersonController extends RE.Component {
     if (this.lockCamVertical) rvAxis = 0;
     if (this.lockCamHorizontal) rhAxis = 0;
 
-    this.camRotationX += rvAxis * 0.1;
+    this.camRotationX += rvAxis * RE.Runtime.deltaTime;
 
     const maxPolarAngle = THREE.MathUtils.degToRad(this.maxPolarAngle);
     const minPolarAngle = THREE.MathUtils.degToRad(this.minPolarAngle);
@@ -176,7 +177,7 @@ export default class RapierThirdPersonController extends RE.Component {
 
     this.cameraHandle.position.copy(this.object3d.position);
 
-    this.cameraHandle.rotateY(-rhAxis * 0.1);
+    this.cameraHandle.rotateY(-rhAxis * RE.Runtime.deltaTime);
     this.cameraHandle.rotateX(this.camRotationX);
 
     if (this.target) {
@@ -233,20 +234,20 @@ export default class RapierThirdPersonController extends RE.Component {
     if (this.gamepad) {
       const rhAxis = this.gamepad.getAxis(2);
 
-      if (Math.abs(rhAxis) > 0.1) return rhAxis * this.axisSensitivity;
+      if (Math.abs(rhAxis) > 0.1) return rhAxis * 10 * this.hAxisSensitivity;
     }
 
-    return RE.Input.mouse.movementX * this.mouseSensitivity * 0.2;
+    return RE.Input.mouse.movementX * this.mouseSensitivity;
   }
 
   getCameraVertical() {
     if (this.gamepad) {
       const rvAxis = this.gamepad.getAxis(3);
 
-      if (Math.abs(rvAxis) > 0.1) return rvAxis * this.axisSensitivity;
+      if (Math.abs(rvAxis) > 0.1) return rvAxis * 10 * this.vAxisSensitivity;
     }
 
-    return RE.Input.mouse.movementY * this.mouseSensitivity * 0.2;
+    return RE.Input.mouse.movementY * this.mouseSensitivity;
   }
 
   getHorizontal() {

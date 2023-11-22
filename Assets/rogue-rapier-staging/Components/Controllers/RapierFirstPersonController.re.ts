@@ -77,7 +77,7 @@ export default class RapierFirstPersonController extends RE.Component {
 
     let rvAxis = this.getCameraVertical();
 
-    this.camRotationX = rvAxis * 0.1;
+    this.camRotationX = rvAxis * RE.Runtime.deltaTime;
 
     this.cameraHandle.rotateX(this.camRotationX);
 
@@ -116,7 +116,7 @@ export default class RapierFirstPersonController extends RE.Component {
     this.dummy.lookAt(this.appliedDirection);
     this.dummy.getWorldDirection(this.targetDirection);
 
-    this.object3d.rotateY(-rhAxis * 0.1);
+    this.object3d.rotateY(-rhAxis * RE.Runtime.deltaTime);
 
     this.characterController.body.setRotation(this.object3d.quaternion, true);
   }
@@ -136,7 +136,7 @@ export default class RapierFirstPersonController extends RE.Component {
     if (this.gamepad) {
       const rhAxis = this.gamepad.getAxis(2);
 
-      if (Math.abs(rhAxis) > 0.1) return rhAxis * this.axisSensitivity;
+      if (Math.abs(rhAxis) > 0.1) return rhAxis * 10 * this.axisSensitivity;
     }
 
     return RE.Input.mouse.movementX * this.mouseSensitivity * 0.2;
@@ -146,7 +146,7 @@ export default class RapierFirstPersonController extends RE.Component {
     if (this.gamepad) {
       const rvAxis = this.gamepad.getAxis(3);
 
-      if (Math.abs(rvAxis) > 0.1) return rvAxis * this.axisSensitivity;
+      if (Math.abs(rvAxis) > 0.1) return rvAxis * 10 * this.axisSensitivity;
     }
 
     return RE.Input.mouse.movementY * this.mouseSensitivity * 0.2;

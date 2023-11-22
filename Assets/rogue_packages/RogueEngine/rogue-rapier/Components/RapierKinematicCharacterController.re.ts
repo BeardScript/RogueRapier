@@ -90,7 +90,7 @@ export default class RapierKinematicCharacterController extends RapierBody {
     );
     this.playerVelocity.normalize();
     this.playerVelocity.multiplyScalar(
-      this.speed * this.movementDirection.length()
+      this.speed * this.movementDirection.length() * RE.Runtime.deltaTime
     );
 
     const nextPosition = this.body.translation();
