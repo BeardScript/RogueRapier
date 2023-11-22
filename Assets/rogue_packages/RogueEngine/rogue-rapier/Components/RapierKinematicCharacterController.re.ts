@@ -101,12 +101,17 @@ export default class RapierKinematicCharacterController extends RapierBody {
       this.jumpYStart = nextPosition.y;
     }
 
-    if (this.isJumping && nextPosition.y - this.jumpYStart >= this.jumpHeight) {
+    const curJumpHeight = nextPosition.y - this.jumpYStart;
+    const jumpPct = 100 - ((curJumpHeight * 100) /  this.jumpHeight);
+    const jumpSpeedFactor = Math.max(jumpPct/100, 0.1);
+    const curJumpSpeed = this.jumpSpeed * jumpSpeedFactor;
+
+    if (this.isJumping && curJumpHeight >= this.jumpHeight) {
       this.isJumping = false;
     }
 
     const gravity = RogueRapier.world.gravity;
-    this.gravity.set(gravity.x, this.isJumping ? this.jumpSpeed : gravity.y, gravity.z);
+    this.gravity.set(gravity.x, this.isJumping ? curJumpSpeed : gravity.y, gravity.z);
     this.playerVelocity.addScaledVector(this.gravity, this.gravityScale * RE.Runtime.deltaTime);
 
     for (let i = 0; i < this.body.numColliders(); i++) {
