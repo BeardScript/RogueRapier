@@ -8,18 +8,18 @@ import RapierBody from "@RE/RogueEngine/rogue-rapier/Components/RapierBody.re";
 export default class RapierKinematicCharacterController extends RapierBody {
   static interface = {}; // prevent inheritance of parent class prop controls.
   @RE.props.num() offset = 0.1;
-  @RE.props.num() maxSlopeClimbingAngle = 5;
-  @RE.props.num() minSlopeSlidingAngle = 25;
-  @RE.props.num() autostepMaxHeight = 0.7;
-  @RE.props.num() autostepMinWidth = 0.3;
+  @RE.props.num() maxSlopeClimbingAngle = 1;
+  @RE.props.num() minSlopeSlidingAngle = 1.1;
+  @RE.props.num() autostepMaxHeight = 0.2;
+  @RE.props.num() autostepMinWidth = 0.1;
   @RE.props.checkbox() autostepIncludeDynamicBodies = true;
-  @RE.props.num() snapToGroundDistance = 0.3;
+  @RE.props.num() snapToGroundDistance = 0.001;
   @RE.props.num() characterMass = 10;
   @RE.props.checkbox() applyImpulsesToDynamicBodies = true;
   @RE.props.checkbox() slideEnabled = true;
-  @RE.props.num() jumpHeight = 2;
-  @RE.props.num() jumpSpeed = 1;
-  @RE.props.num() speed = 0.1;
+  @RE.props.num() jumpHeight = 2.5;
+  @RE.props.num() jumpSpeed = 50;
+  @RE.props.num() speed = 5;
 
   @RE.props.num()
   get gravityScale() {
