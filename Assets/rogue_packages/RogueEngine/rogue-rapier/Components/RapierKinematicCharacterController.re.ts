@@ -14,7 +14,7 @@ export default class RapierKinematicCharacterController extends RapierBody {
   @RE.props.num() autostepMinWidth = 0.1;
   @RE.props.checkbox() autostepIncludeDynamicBodies = true;
   @RE.props.num() snapToGroundDistance = 0.001;
-  @RE.props.num() characterMass = 10;
+  @RE.props.num() characterMass = 70;
   @RE.props.checkbox() applyImpulsesToDynamicBodies = true;
   @RE.props.checkbox() slideEnabled = true;
   @RE.props.num() jumpHeight = 2.5;
