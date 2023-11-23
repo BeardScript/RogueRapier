@@ -45,7 +45,11 @@ export default class ExampleAnimationMixer extends RE.Component {
   }
 
   update() {
-    if (!this.characterController.characterController.computedGrounded()) {
+    const vSpeed = Math.abs(this.characterController.playerVelocity.y);
+    const isJumping = this.characterController.isJumping;
+    const isGrounded = this.characterController.isGrounded;
+
+    if (isJumping || !isGrounded && vSpeed > 0.2) {
       this.activeAction !== this.jumpAction && this.mix(this.jumpAction);
     }
     else if (this.isMoving()) {

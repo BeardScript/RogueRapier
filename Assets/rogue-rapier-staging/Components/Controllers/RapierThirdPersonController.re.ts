@@ -213,15 +213,15 @@ export default class RapierThirdPersonController extends RE.Component {
     this.camera.getWorldPosition(this.cameraWorldPos);
 
     this.rayOrigin.copy(this.object3d.position);
-    this.rayOrigin.y += this.cameraOffset.y/2;
+    this.rayOrigin.y += this.cameraOffset.y;
 
-    this.camToObjectDir.subVectors(this.object3d.position, this.cameraWorldPos).normalize().negate();
+    this.camToObjectDir.subVectors(this.rayOrigin, this.cameraWorldPos).normalize().negate();
     this.camRay.dir = this.camToObjectDir;
     this.camRay.origin = this.rayOrigin;
 
     const _ = undefined;
-    const maxToi = this.object3d.position.distanceTo(this.cameraWorldPos) - 0;
-    const hit = RogueRapier.world.castRay(this.camRay, maxToi, true, _,_,_, this.characterController.body);
+    const maxToi = this.object3d.position.distanceTo(this.cameraWorldPos);
+    const hit = RogueRapier.world.castRay(this.camRay, maxToi, false, _,_,_, this.characterController.body);
 
     if (hit) {
       const point = this.camRay.pointAt(hit.toi);

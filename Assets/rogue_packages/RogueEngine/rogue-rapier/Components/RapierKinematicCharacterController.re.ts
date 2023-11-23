@@ -21,24 +21,18 @@ export default class RapierKinematicCharacterController extends RapierBody {
   @RE.props.num() jumpSpeed = 50;
   @RE.props.num() speed = 5;
 
-  @RE.props.num()
-  get gravityScale() {
-    return this._gravityScale;
-  }
-
-  set gravityScale(value: number) {
-    this._gravityScale = value;
-    RE.Runtime.isRunning && this.body && this.body.setGravityScale(value, true);
-  }
-
   characterController: RAPIER.KinematicCharacterController;
   characterColliders: RapierCollider[] = [];
   movementDirection = new THREE.Vector3();
   playerVelocity = new THREE.Vector3();
+  isJumping = false;
+  isGrounded = false;
+  curJumpHeight = 0;
 
   private gravity = new THREE.Vector3();
   private jumpYStart = 0;
-  private isJumping = false;
+  private isJumpingUp = false;
+  private fallTime = 1;
 
   init() {
     this.type = RAPIER.RigidBodyType.KinematicPositionBased;
@@ -94,25 +88,41 @@ export default class RapierKinematicCharacterController extends RapierBody {
     );
 
     const nextPosition = this.body.translation();
-    const isGrounded = this.characterController.computedGrounded();
+    this.isGrounded = this.characterController.computedGrounded();
 
-    if (isGrounded && this.movementDirection.y != 0) {
+    if (this.isGrounded) this.fallTime = 0;
+
+    if (this.isJumping && this.isGrounded) {
+      this.isJumping = false;
+    }
+
+    if (this.isGrounded && this.movementDirection.y > 0) {
+      this.isJumpingUp = true;
       this.isJumping = true;
       this.jumpYStart = nextPosition.y;
     }
 
-    const curJumpHeight = nextPosition.y - this.jumpYStart;
-    const jumpPct = 100 - ((curJumpHeight * 100) /  this.jumpHeight);
+    this.curJumpHeight = nextPosition.y - this.jumpYStart;
+    const jumpPct = 100 - ((this.curJumpHeight * 100) /  this.jumpHeight);
     const jumpSpeedFactor = Math.max(jumpPct/100, 0.1);
     const curJumpSpeed = this.jumpSpeed * jumpSpeedFactor;
 
-    if (this.isJumping && curJumpHeight >= this.jumpHeight) {
-      this.isJumping = false;
+    if (this.isJumpingUp && this.curJumpHeight >= this.jumpHeight) {
+      this.isJumpingUp = false;
     }
 
     const gravity = RogueRapier.world.gravity;
-    this.gravity.set(gravity.x, this.isJumping ? curJumpSpeed : gravity.y, gravity.z);
-    this.playerVelocity.addScaledVector(this.gravity, this.gravityScale * RE.Runtime.deltaTime);
+    this.gravity.set(gravity.x, this.isJumpingUp ? curJumpSpeed : gravity.y, gravity.z);
+    this.playerVelocity.addScaledVector(this.gravity, RE.Runtime.deltaTime);
+
+    if (!this.isJumpingUp && !this.isGrounded) {
+      this.fallTime += RE.Runtime.deltaTime * this.characterMass * 0.1;
+      if (this.fallTime < 2) {
+        this.playerVelocity.y = gravity.y * this.fallTime * RE.Runtime.deltaTime;
+      } else {
+        this.playerVelocity.y = gravity.y * 2 * RE.Runtime.deltaTime;
+      }
+    }
 
     for (let i = 0; i < this.body.numColliders(); i++) {
       this.characterController.computeColliderMovement(
