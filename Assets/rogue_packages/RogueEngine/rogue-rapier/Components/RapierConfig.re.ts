@@ -55,6 +55,7 @@ export default class RapierConfig extends RE.Component {
       );
     }
 
+    RogueRapier.world.timestep = RE.Runtime.deltaTime;
     RogueRapier.world.step(RogueRapier.eventQueue);
 
     RogueRapier.eventQueue.drainCollisionEvents((handle1, handle2, started) => {
@@ -69,14 +70,14 @@ export default class RapierConfig extends RE.Component {
       let bodyComp1: RapierBody | undefined;
       let bodyComp2: RapierBody | undefined;
 
-      components.forEach(bodyComp => {
-        if (bodyComp.body.handle === body1?.handle) {
+      for (let bodyComp of components) {
+        if (bodyComp?.body?.handle === body1?.handle) {
           bodyComp1 = bodyComp;
         }
-        else if (bodyComp.body.handle === body2?.handle) {
+        else if (bodyComp?.body?.handle === body2?.handle) {
           bodyComp2 = bodyComp;
         }
-      });
+      }
 
       if (bodyComp1 && col1.activeEvents() === RAPIER.ActiveEvents.COLLISION_EVENTS) {
         const colInfo = {ownCollider: col1, otherCollider: col2, otherBody: bodyComp2 as RapierBody}
