@@ -84,7 +84,7 @@ export default abstract class RapierCollider extends RE.Component {
   }
 
   getBodyComponent(object3d: THREE.Object3D): RapierBody | undefined {
-    const bodyComponent = RE.getComponent(RapierBody, object3d);
+    const bodyComponent = RapierBody.get(object3d);
 
     if (bodyComponent) {
       return bodyComponent;

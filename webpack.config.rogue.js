@@ -12,6 +12,7 @@ function getDevFiles() {
     ignore: [
       "**/*/_Editor/**/*",
       "**/*.d.ts",
+      "**/*@(webpack.config.user.js)"
     ]
   });
   return files;
@@ -21,6 +22,7 @@ function getEditorFiles() {
   const files = glob.sync( resolve("./Assets") + "/**/*.@(ts|js)", {
     ignore: [
       "**/*.d.ts",
+      "**/*@(webpack.config.user.js)"
     ]
   });
   return files;
@@ -84,7 +86,9 @@ module.exports = {
     alias: {
       "Assets": resolve("Assets"),
       "rogue-engine": resolve("_Rogue/rogue-engine"),
-      "@RE": path.join(__dirname, './Assets/rogue_packages')
+      "@RE": path.join(__dirname, './Assets/rogue_packages'),
+      "three/addons": "three/examples/jsm/",
+      "three/nodes": "three/examples/jsm/nodes/Nodes",
     },
     fallback: { "path": false, "fs": false }
   },
@@ -116,6 +120,9 @@ module.exports = {
   },
   performance: {
     hints: false
+  },
+  experiments: {
+    topLevelAwait: true
   },
   devtool: "source-map",
   plugins: [new ForkTsCheckerWebpackPlugin()]

@@ -64,6 +64,7 @@
       RE.App.activeCamera = sceneJson.initialCameraId;
       RE.App.sceneController = RE.Runtime;
       RE.App.currentScene = new THREE.ObjectLoader().parse(sceneJson.scene);
+      RE.App.loadAudioListeners(RE.App.currentScene);
 
       RE.initComponents( RE.App.currentScene, sceneJson.components );
 

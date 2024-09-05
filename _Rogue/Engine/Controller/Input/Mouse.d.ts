@@ -1,5 +1,7 @@
 import type { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls';
 export declare class Mouse {
+    viewX: number;
+    viewY: number;
     private _x;
     private _y;
     private _movementX;
@@ -15,9 +17,9 @@ export declare class Mouse {
     private _isMidButtonDown;
     private _isMidButtonPressed;
     private _isMidButtonUp;
-    private _buttonDown;
-    private _buttonPressed;
-    private _buttonUp;
+    private _upBtns;
+    private _downBtns;
+    private _pressedBtns;
     private _wheelY;
     private _wheelX;
     private _wheelTimeout;
@@ -38,9 +40,6 @@ export declare class Mouse {
     get isMidButtonDown(): boolean;
     get isMidButtonPressed(): boolean;
     get isMidButtonUp(): boolean;
-    get buttonDown(): number | undefined;
-    get buttonPressed(): number | undefined;
-    get buttonUp(): number | undefined;
     get wheelY(): number;
     get wheelX(): number;
     get enabled(): boolean;

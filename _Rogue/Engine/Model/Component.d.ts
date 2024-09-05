@@ -8,6 +8,13 @@ export default class Component extends Lifecycle {
     uuid: string;
     interface: ComponentInterface;
     constructor(name: string, object3d: Object3D);
+    static get<T>(this: {new (...args: any[]): T}): T
+    static get<T>(this: {new (...args: any[]): T}, object3d: Object3D): T
+    static get<T>(this: {new (...args: any[]): T}, object3d: Object3D, inAncestor?: boolean): T
+    static get<T>(this: {new (...args: any[]): T}, name: string, object3d?: Object3D): T
+    static get<T>(this: {new (...args: any[]): T}, name: string, object3d: Object3D, inAncestor?: boolean): T
+    static require(inAncestor?: boolean): any;
+    static require(name: string, inAncestor?: boolean): any;
     /**
      * The name by which to search a component.
      *
@@ -59,6 +66,7 @@ type ComponentInterfaceType = 'String' | 'Number' | 'Boolean' | 'Select' | 'Vect
 export type ComponentInterface = {
     [propName: string]: ComponentInterfaceType | {
         type: ComponentInterfaceType;
+        isMap?: boolean;
         options?: any;
     };
 };

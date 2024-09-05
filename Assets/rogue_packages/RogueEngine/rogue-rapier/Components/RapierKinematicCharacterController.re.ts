@@ -33,6 +33,7 @@ export default class RapierKinematicCharacterController extends RapierBody {
   private jumpYStart = 0;
   private isJumpingUp = false;
   private fallTime = 1;
+  private lastJumpHeight = 0;
 
   init() {
     this.type = RAPIER.RigidBodyType.KinematicPositionBased;
@@ -49,9 +50,10 @@ export default class RapierKinematicCharacterController extends RapierBody {
   }
 
   beforeUpdate() {
-    super.beforeUpdate();
     if (!RogueRapier.initialized) return;
-    !this.initialized && this.init();
+    if (!this.initialized) return;
+
+    super.beforeUpdate();
 
     if (this.body?.numColliders() < 1) return;
 
@@ -74,6 +76,8 @@ export default class RapierKinematicCharacterController extends RapierBody {
       RE.Debug.logWarning("No character collider");
       return;
     }
+
+    RogueRapier.initialized && !this.initialized && this.init();
   }
 
   handleKinematicPositionBased() {
@@ -102,14 +106,17 @@ export default class RapierKinematicCharacterController extends RapierBody {
       this.jumpYStart = nextPosition.y;
     }
 
-    this.curJumpHeight = nextPosition.y - this.jumpYStart;
+    this.curJumpHeight = (nextPosition.y - this.jumpYStart) + this.offset * 1.1;
     const jumpPct = 100 - ((this.curJumpHeight * 100) /  this.jumpHeight);
     const jumpSpeedFactor = Math.max(jumpPct/100, 0.1);
     const curJumpSpeed = this.jumpSpeed * jumpSpeedFactor;
 
+    // if (this.isJumpingUp && this.curJumpHeight >= this.jumpHeight || this.lastJumpHeight === this.curJumpHeight) {
     if (this.isJumpingUp && this.curJumpHeight >= this.jumpHeight) {
       this.isJumpingUp = false;
     }
+
+    this.lastJumpHeight = this.curJumpHeight;
 
     const gravity = RogueRapier.world.gravity;
     this.gravity.set(gravity.x, this.isJumpingUp ? curJumpSpeed : gravity.y, gravity.z);

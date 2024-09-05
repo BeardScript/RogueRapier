@@ -1,9 +1,9 @@
-import type { Object3D } from 'three';
+import * as THREE from 'three';
 export declare class Prefab {
     private _uuid;
     constructor(uuid: any);
     get uuid(): string;
-    get path(): any;
-    get name(): any;
-    instantiate(parent?: Object3D): Object3D<import("three").Event>;
+    get path(): string;
+    get name(): string;
+    instantiate(parent?: THREE.Object3D): THREE.Object3D;
 }
