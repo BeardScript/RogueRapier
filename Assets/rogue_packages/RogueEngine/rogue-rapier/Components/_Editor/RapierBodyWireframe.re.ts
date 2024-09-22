@@ -39,10 +39,11 @@ export default class RapierBodyWireframe extends RE.Component {
     this.lines.geometry.computeBoundingSphere();
     this.lines.frustumCulled = false;
 
+    try {
+      this.world?.free();
+    } catch {};
+
     this.initPhysics().then(() => {
-      try {
-        this.world?.free();
-      } catch {};
       this.world = new RAPIER.World({x: 0, y: 0, z: 0});
       RogueRapier.world = this.world;
       this.initializedPhysics = true;
