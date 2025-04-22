@@ -131,12 +131,15 @@ export default class RapierKinematicCharacterController extends RapierBody {
       }
     }
 
-    for (let i = 0; i < this.body.numColliders(); i++) {
+    // for (let i = 0; i < this.body.numColliders(); i++) {
       this.characterController.computeColliderMovement(
-        this.body.collider(i),
+        this.body.collider(0),
         this.playerVelocity,
+        RAPIER.QueryFilterFlags.EXCLUDE_SENSORS,
+        undefined,
+        (col) => !col.isSensor()
       );
-    }
+    // }
 
     const characterMovement = this.characterController.computedMovement();
 

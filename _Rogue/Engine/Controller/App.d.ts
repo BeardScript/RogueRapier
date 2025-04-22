@@ -23,8 +23,13 @@ export declare class App {
     static get sceneController(): SceneController;
     static set sceneController(value: SceneController);
     static get lanIP(): string;
-    static toJSON(assetPaths: {
-        [uuid: string]: string;
+    static toJSON(options: {
+        assetPaths: {
+            [uuid: string]: string;
+        };
+        namedPrefabUUIDs: {
+            [name: string]: string;
+        };
     }): {
         title: string;
         scenes: {
@@ -34,6 +39,9 @@ export declare class App {
         lanIP: string;
         assetPaths: {
             [uuid: string]: string;
+        };
+        namedPrefabUUIDs: {
+            [name: string]: string;
         };
     };
     static fromJSON(json: {
@@ -56,10 +64,13 @@ export declare class App {
         assetPaths: {
             [uuid: string]: string;
         };
+        namedPrefabUUIDs: {
+            [name: string]: string;
+        };
     }): void;
     static loadScene(name: string | number): Promise<void>;
     private static loadSceneFunc;
-    static clone(object: Object3D, parent?: Object3D): Object3D;
+    static clone(object: Object3D, parent?: Object3D): Object3D<import("three").Object3DEventMap>;
     private static loadComponentsRecursive;
     private static loadAudioListeners;
 }

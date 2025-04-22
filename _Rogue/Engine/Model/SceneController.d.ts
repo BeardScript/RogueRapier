@@ -5,6 +5,9 @@ import type Component from '../Model/Component';
 export default abstract class SceneController extends Lifecycle {
     renderFunc: () => void;
     domRect: DOMRect;
+    resolution?: number;
+    aspectRatio?: number;
+    useAspectRatio: boolean;
     private _clock;
     private _onPlayCallbacks;
     private _onStopCallbacks;
@@ -58,11 +61,14 @@ export default abstract class SceneController extends Lifecycle {
     protected update(): void;
     protected afterUpdate(): void;
     startRenderer(renderer?: WebGLRenderer): void;
+    setFullscreen(): void;
     protected doOnResize: (entries: any) => void;
     onResize: () => void;
     resizeObserver: ResizeObserver;
     setSceneDimensions(width: number, height: number): void;
     private setCameraDimensions;
     protected adjustCameraAndRenderer(force?: boolean): void;
+    scaleResolution(): void;
+    setAspectRatio(): void;
     protected beginUpdateCycle(): void;
 }

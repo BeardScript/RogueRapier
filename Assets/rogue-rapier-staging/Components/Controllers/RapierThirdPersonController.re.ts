@@ -224,7 +224,7 @@ export default class RapierThirdPersonController extends RE.Component {
     const hit = RogueRapier.world.castRay(this.camRay, maxToi, false, _,_,_, this.characterController.body);
 
     if (hit) {
-      const point = this.camRay.pointAt(hit.toi);
+      const point = this.camRay.pointAt(hit.timeOfImpact);
       this.cameraHandle.position.set(point.x, point.y, point.z);
       this.cameraHandle.position.sub(this.camera.position);
     }

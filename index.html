@@ -15,7 +15,7 @@
       -webkit-user-select: none;
       -ms-user-select: none;
       user-select: none;
-      background-color: #252933;
+      background-color: #000000;
       overflow: hidden;
     }
   </style>
@@ -24,7 +24,7 @@
   <noscript>
     You need to enable JavaScript to run this app.
   </noscript>
-  <div id="rogue-app"></div>
+  <div id="rogue-app" style="position: relative;"></div>
   <script src="/dist/engine-bundle.js"></script>
   <script src="/dist/rogue-engine-user-scripts.js"></script>
   <script>
@@ -53,18 +53,23 @@
       RE.Input.touch.init();
 
       const res = await fetch("/getScenePlayerConfig");
-      const {appConfig, sceneJson, assetPaths} = await res.json();
+      const {appConfig, sceneJson, assetPaths, namedPrefabUUIDs} = await res.json();
 
-      console.log({appConfig, sceneJson, assetPaths});
+      console.log({appConfig, sceneJson, assetPaths, namedPrefabUUIDs});
 
+      RE.Prefab.namedPrefabUUIDs = namedPrefabUUIDs;
       RE.AssetManager.setAssetPaths(assetPaths || {});
       RE.AssetManager.loadAssetConfigs(sceneJson.assetConfigs);
+
+      const scene = new THREE.ObjectLoader().parse(sceneJson.scene);
 
       RE.App.fromJSON(appConfig);
       RE.App.activeCamera = sceneJson.initialCameraId;
       RE.App.sceneController = RE.Runtime;
-      RE.App.currentScene = new THREE.ObjectLoader().parse(sceneJson.scene);
+      RE.App.currentScene = scene;
       RE.App.loadAudioListeners(RE.App.currentScene);
+
+      RE.Runtime.scene = scene;
 
       RE.initComponents( RE.App.currentScene, sceneJson.components );
 

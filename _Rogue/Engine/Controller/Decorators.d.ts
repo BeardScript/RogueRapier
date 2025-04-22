@@ -26,10 +26,11 @@ declare class ListProp extends Decorators {
 declare class MapProp extends Decorators {
 }
 declare class Props extends Decorators {
-    private _list;
-    private _map;
+    protected _list: ListProp;
+    protected _map: MapProp;
     get list(): ListProp;
     get map(): MapProp;
+    group(name: string, foldable?: boolean): (target: Object, key: any) => void;
     data(): typeof decoratorFunc;
 }
 export declare const props: Props;

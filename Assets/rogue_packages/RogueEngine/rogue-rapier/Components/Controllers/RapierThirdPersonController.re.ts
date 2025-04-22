@@ -4,7 +4,10 @@ import RAPIER from '@dimforge/rapier3d-compat';
 import RogueRapier from '@RE/RogueEngine/rogue-rapier/Lib/RogueRapier';
 import RapierKinematicCharacterController from '@RE/RogueEngine/rogue-rapier/Components/RapierKinematicCharacterController.re';
 
+@RE.registerComponent
 export default class RapierThirdPersonController extends RE.Component {
+  @RE.props.checkbox() lockCursor = true;
+  @RE.props.checkbox() useInternalCamera = true;
   @RE.props.object3d() target: THREE.Object3D | undefined;
   @RE.props.checkbox() lockCameraOnTarget = true;
   @RE.props.checkbox() avoidViewObstacles = true;
@@ -53,25 +56,35 @@ export default class RapierThirdPersonController extends RE.Component {
     if (!RE.Runtime.isRunning) return;
     if (!this.enabled) return;
 
-    this.camera = new THREE.PerspectiveCamera();
-    this.cameraHandle.add(this.camera);
-    this.camera.position.set(0,0,0);
-    this.camera.rotation.set(0,0,0);
-    RE.Runtime.scene.add(this.cameraHandle);
-    RE.App.activeCamera = this.camera.uuid;
+    if (this.useInternalCamera) {
+      this.camera = new THREE.PerspectiveCamera();
+      this.cameraHandle.add(this.camera);
+      this.camera.position.set(0,0,0);
+      this.camera.rotation.set(0,0,0);
+      RE.Runtime.scene.add(this.cameraHandle);
+      RE.App.activeCamera = this.camera.uuid;
 
-    this.setCameraSettings();
+      this.setCameraSettings();
+    }
   }
 
   start() {
-    this.cameraHandle.position.copy(this.object3d.position);
-    this.cameraHandle.quaternion.copy(this.object3d.quaternion);
+    if (this.useInternalCamera) {
+      this.cameraHandle.position.copy(this.object3d.position);
+      this.cameraHandle.quaternion.copy(this.object3d.quaternion);
+    }
 
-    RE.Runtime.rogueDOMContainer.onclick = () => RE.Runtime.isRunning && RE.Input.mouse.lock();
+    if (this.lockCursor) {
+      RE.Runtime.rogueDOMContainer.onclick = () => RE.Runtime.isRunning && RE.Input.mouse.lock();
+    }
   }
 
   update() {
     if (!RogueRapier.initialized) return;
+
+    if (!this.useInternalCamera) {
+      this.cameraHandle = RE.Runtime.camera;
+    }
 
     this.object3d.getWorldDirection(this.localFWD);
 
@@ -79,11 +92,11 @@ export default class RapierThirdPersonController extends RE.Component {
     this.characterController.movementDirection.y = 0;
     this.characterController.movementDirection.z = 0;
 
-    this.moveCamera();
+    this.useInternalCamera && this.moveCamera();
     this.setRotation();
     this.translate();
 
-    this.setCameraSettings();
+    this.useInternalCamera && this.setCameraSettings();
   }
 
   translate() {
@@ -111,6 +124,7 @@ export default class RapierThirdPersonController extends RE.Component {
       } else {
         this.camDirection.copy(this.inputDirection);
       }
+      !this.useInternalCamera && this.camDirection.negate();
       this.cameraHandle.localToWorld(this.camDirection);
       this.camDirection.sub(this.cameraHandle.position);
       this.camDirection.normalize();
@@ -218,7 +232,7 @@ export default class RapierThirdPersonController extends RE.Component {
     const hit = RogueRapier.world.castRay(this.camRay, maxToi, false, _,_,_, this.characterController.body);
 
     if (hit) {
-      const point = this.camRay.pointAt(hit.toi);
+      const point = this.camRay.pointAt(hit.timeOfImpact);
       this.cameraHandle.position.set(point.x, point.y, point.z);
       this.cameraHandle.position.sub(this.camera.position);
     }
@@ -243,6 +257,4 @@ export default class RapierThirdPersonController extends RE.Component {
     }
   }
 }
-
-RE.registerComponent(RapierThirdPersonController);
         

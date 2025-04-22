@@ -3,9 +3,9 @@ export declare class Tags {
     private static tagsMap;
     private static objectTagsMap;
     static getTags(): string[];
-    static getObjects(tag: string): THREE.Object3D[];
-    static getWithAll(...tags: string[]): THREE.Object3D[];
-    static getWithAny(...tags: string[]): THREE.Object3D[];
+    static getObjects(tag: string): THREE.Object3D<THREE.Object3DEventMap>[];
+    static getWithAll(...tags: string[]): THREE.Object3D<THREE.Object3DEventMap>[];
+    static getWithAny(...tags: string[]): THREE.Object3D<THREE.Object3DEventMap>[];
     static hasAny(object: THREE.Object3D, ...tags: string[]): boolean;
     static hasAll(object: THREE.Object3D, ...tags: string[]): boolean;
     static hasNone(object: THREE.Object3D, ...tags: string[]): boolean;

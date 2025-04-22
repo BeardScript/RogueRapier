@@ -49,10 +49,10 @@ export default class RapierBodyWireframe extends RE.Component {
       this.initializedPhysics = true;
     });
 
-    RE.App.currentScene.remove(this.lines);
+    RE.App.sceneController.scene.remove(this.lines);
 
     this.lines.userData.isEditorObject = true;
-    RE.App.currentScene.add(this.lines);
+    RE.App.sceneController.scene.add(this.lines);
 
     this.handleOnComponentAdded.stop();
     this.handleOnComponentRemoved.stop();
@@ -152,7 +152,7 @@ export default class RapierBodyWireframe extends RE.Component {
   private async cleanupImpostors() {
     RogueRapier.world && RogueRapier.world.bodies.forEach(body => RogueRapier.world.removeRigidBody(body));
     this.lines.visible = false;
-    RE.App.currentScene.remove(this.lines);
+    RE.App.sceneController.scene.remove(this.lines);
 
     this.colliders = [];
   }
@@ -190,7 +190,7 @@ export default class RapierBodyWireframe extends RE.Component {
       });
     });
 
-    RE.App.currentScene.add(this.lines);
+    RE.App.sceneController.scene.add(this.lines);
   }
 
   private arraysAreEqual(array1: any[], array2: any[]) {
@@ -202,7 +202,7 @@ export default class RapierBodyWireframe extends RE.Component {
   }
 
   onBeforeRemoved() {
-    RE.App.currentScene.remove(this.lines);
+    RE.App.sceneController.scene.remove(this.lines);
     this.handleOnComponentAdded.stop();
     this.handleOnComponentRemoved.stop();
     this.handleOnPlay.stop();

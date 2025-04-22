@@ -5,6 +5,7 @@ import RogueRapier from '../Lib/RogueRapier';
 
 export type RapierCollisionInfo = {ownCollider: RAPIER.Collider, otherCollider: RAPIER.Collider, otherBody: RapierBody};
 
+@RE.registerComponent
 export default class RapierBody extends RE.Component {
   @RE.props.select() type = 0;
   typeOptions = ["Dynamic", "Fixed", "KinematicPositionBased", "KinematicVelocityBased"];
@@ -134,9 +135,6 @@ export default class RapierBody extends RE.Component {
   init() {
     let rigidBodyDesc = this.getType();
 
-    // const pos = this.object3d.position;
-    // const rot = this.object3d.quaternion;
-
     this.object3d.getWorldPosition(this.newPos);
     this.object3d.getWorldQuaternion(this.newRot);
   
@@ -210,5 +208,3 @@ export default class RapierBody extends RE.Component {
     this.object3d.quaternion.setFromRotationMatrix(this.matrixA);
   }
 }
-
-RE.registerComponent(RapierBody);

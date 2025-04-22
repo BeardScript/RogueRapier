@@ -35,6 +35,39 @@ type InputBinds = {
 type InputAction = {
     [name: string]: InputAxesBinds | InputBinds;
 };
+type GamepadMapping = {
+    [key: string]: {
+        name: string;
+        key?: "x" | "y" | number;
+    };
+};
+type TouchMapping = {
+    [key: string]: {
+        name: string;
+        key?: "area" | number;
+    };
+};
+type MouseMapping = {
+    [key: string]: {
+        name: string;
+        key?: number | "WheelUp" | "WheelDown";
+    };
+};
+type Mapping = {
+    [key: string]: {
+        name: string;
+        key?: number;
+    };
+};
+type InputMapping = {
+    Gamepad: GamepadMapping;
+    Mouse: MouseMapping;
+    Keyboard: Mapping;
+    Touch: TouchMapping;
+};
+type InputMap = {
+    [mapName: string]: InputMapping;
+};
 export declare abstract class Input {
     private static _mouse;
     private static _keyboard;
@@ -48,8 +81,8 @@ export declare abstract class Input {
         MouseAndKeyboard: number;
         Gamepads: number[];
     };
-    private static actionMap;
-    private static inputMaps;
+    static actionMap: InputAction;
+    static inputMaps: InputMap;
     static setActionMap(bindings: InputAction): void;
     private static getGamepadKey;
     private static copyGamepadConfig;

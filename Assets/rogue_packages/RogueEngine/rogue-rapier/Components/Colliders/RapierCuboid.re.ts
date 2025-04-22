@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import RogueRapier from '../../Lib/RogueRapier';
 import RapierCollider from './RapierCollider';
 
+@RE.registerComponent
 export default class RapierCuboid extends RapierCollider {
   private _sizeOffsetX = 1;
   private _sizeOffsetY = 1;
@@ -68,5 +69,3 @@ export default class RapierCuboid extends RapierCollider {
     this.collider = RogueRapier.world.createCollider(colliderDesc, this.body);
   }
 }
-
-RE.registerComponent(RapierCuboid);

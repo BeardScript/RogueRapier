@@ -45,6 +45,7 @@ export default abstract class RapierCollider extends RE.Component {
 
     this.collider.setSensor(this.isSensor);
     this.collisionEvents && this.collider.setActiveEvents(RAPIER.ActiveEvents.COLLISION_EVENTS);
+    this.collisionEvents && this.collider.setActiveCollisionTypes(RAPIER.ActiveCollisionTypes.ALL);
 
     this.setColliderPos();
     this.setColliderRot();

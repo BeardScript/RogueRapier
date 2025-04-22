@@ -2,6 +2,7 @@ import * as RE from 'rogue-engine';
 import * as THREE from 'three';
 import RapierKinematicCharacterController from '@RE/RogueEngine/rogue-rapier/Components/RapierKinematicCharacterController.re';
 
+@RE.registerComponent
 export default class RapierFirstPersonController extends RE.Component {
   @RE.props.vector3() cameraOffset = new THREE.Vector3(0, 1.6, 0.2);
   @RE.props.vector2() lookSpeed = new THREE.Vector2(5, 5);
@@ -151,6 +152,4 @@ export default class RapierFirstPersonController extends RE.Component {
     }
   }
 }
-
-RE.registerComponent(RapierFirstPersonController);
         

@@ -4,6 +4,7 @@ import RogueRapier from '../Lib/RogueRapier';
 import RapierBody from './RapierBody.re';
 import RAPIER from '@dimforge/rapier3d-compat';
 
+@RE.registerComponent
 export default class RapierConfig extends RE.Component {
   @RE.props.vector3() gravity = new THREE.Vector3(0, -9.81, 0);
 
@@ -41,7 +42,7 @@ export default class RapierConfig extends RE.Component {
     }
   }
 
-  beforeUpdate() {
+  update(): void {
     if (!RogueRapier.initialized) return;
 
     if (this.debug) {
@@ -57,6 +58,10 @@ export default class RapierConfig extends RE.Component {
         new THREE.BufferAttribute(buffers.colors, 4),
       );
     }
+  }
+
+  beforeUpdate() {
+    if (!RogueRapier.initialized) return;
 
     RogueRapier.world.timestep = RE.Runtime.deltaTime;
     RogueRapier.world.step(RogueRapier.eventQueue);
@@ -94,5 +99,3 @@ export default class RapierConfig extends RE.Component {
     });
   }
 }
-
-RE.registerComponent(RapierConfig);

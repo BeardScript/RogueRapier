@@ -4,6 +4,7 @@ import RAPIER from '@dimforge/rapier3d-compat';
 import RogueRapier from '../../Lib/RogueRapier';
 import RapierCollider from './RapierCollider';
 
+@RE.registerComponent
 export default class RapierTrimesh extends RapierCollider {
   worldScale = new THREE.Vector3();
   worldPos = new THREE.Vector3();
@@ -25,9 +26,6 @@ export default class RapierTrimesh extends RapierCollider {
     const mesh = this.object3d;
     let geometry = (mesh.geometry as THREE.BufferGeometry);
     
-    // geometry.computeBoundingSphere();
-    // geometry.normalizeNormals();
-
     const vertices = this.getVertices(geometry);
 
 	  if (!vertices.length) return;
@@ -62,6 +60,4 @@ export default class RapierTrimesh extends RapierCollider {
     return vertices;
   }
 }
-
-RE.registerComponent(RapierTrimesh);
         
