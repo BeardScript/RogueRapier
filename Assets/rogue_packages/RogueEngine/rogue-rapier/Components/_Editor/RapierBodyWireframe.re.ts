@@ -19,6 +19,7 @@ export default class RapierBodyWireframe extends RE.Component {
 
   world: RAPIER.World;
   initializedPhysics = false;
+  initializing = false;
 
   private handleOnComponentAdded = { stop: () => { } };
   private handleOnComponentRemoved = { stop: () => { } };
@@ -34,6 +35,7 @@ export default class RapierBodyWireframe extends RE.Component {
   }
 
   start() {
+    this.initializing = true;
     this.initializedPhysics = false;
 
     this.lines.geometry.computeBoundingSphere();
@@ -47,6 +49,7 @@ export default class RapierBodyWireframe extends RE.Component {
       this.world = new RAPIER.World({x: 0, y: 0, z: 0});
       RogueRapier.world = this.world;
       this.initializedPhysics = true;
+      this.initializing = false;
     });
 
     RE.App.sceneController.scene.remove(this.lines);
@@ -67,6 +70,7 @@ export default class RapierBodyWireframe extends RE.Component {
       } catch {};
       this.handleOnComponentAdded.stop();
       this.handleOnComponentRemoved.stop();
+      this.initializedPhysics = false;
     });
   }
 
@@ -88,8 +92,12 @@ export default class RapierBodyWireframe extends RE.Component {
   }
 
   afterUpdate() {
+    if (!this.enabled) return;
     this.lines.visible = false;
-    if (!this.initializedPhysics) return;
+    if (!this.initializedPhysics || !this.world || !this.world?.bodies) {
+      !this.initializing && this.start();
+      return;
+    }
 
     const selectedObjects = window["rogue-editor"].Project.selectedObjects as THREE.Object3D[];
 
@@ -99,7 +107,7 @@ export default class RapierBodyWireframe extends RE.Component {
       this.setupImpostors();
     }
 
-    if (!this.world || (this.world && this.world.bodies.len() === 0)) {
+    if (!this.world || !this.world?.bodies || (this.world && this.world?.bodies?.len() === 0)) {
       return;
     }
 
@@ -206,6 +214,7 @@ export default class RapierBodyWireframe extends RE.Component {
     this.handleOnComponentAdded.stop();
     this.handleOnComponentRemoved.stop();
     this.handleOnPlay.stop();
+    this.initializedPhysics = false;
     this.cleanupImpostors();
   }
 }

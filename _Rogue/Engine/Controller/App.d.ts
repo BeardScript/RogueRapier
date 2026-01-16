@@ -23,7 +23,7 @@ export declare class App {
     static get sceneController(): SceneController;
     static set sceneController(value: SceneController);
     static get lanIP(): string;
-    static toJSON(options: {
+    static toJSON(options?: {
         assetPaths: {
             [uuid: string]: string;
         };
@@ -43,17 +43,24 @@ export declare class App {
         namedPrefabUUIDs: {
             [name: string]: string;
         };
+        tags: any;
+        inputConfig: any;
     };
-    static fromJSON(json: {
+    static fromJSON(config: {
         title: string;
         scenes: {
             name: string;
             uuid: string;
         }[];
-        assetPaths: {
+        assetPaths?: {
             [uuid: string]: string;
         };
         lanIP?: string;
+        tags?: string[];
+        inputConfig?: any;
+        namedPrefabUUIDs?: {
+            [name: string]: string;
+        };
     }): void;
     static play(config: {
         title: string;
@@ -67,6 +74,8 @@ export declare class App {
         namedPrefabUUIDs: {
             [name: string]: string;
         };
+        tags?: string[];
+        inputConfig?: any;
     }): void;
     static loadScene(name: string | number): Promise<void>;
     private static loadSceneFunc;

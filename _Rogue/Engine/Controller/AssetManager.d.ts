@@ -14,7 +14,7 @@ declare class AssetManagerClass {
     private _objectLoader;
     sceneController: SceneController;
     get assets(): {
-        [uuid: string]: AnimationClip | Object3D<import("three").Object3DEventMap> | Texture | Material | AudioAsset;
+        [uuid: string]: Object3D<import("three").Object3DEventMap> | AnimationClip | Texture<unknown> | Material | AudioAsset;
     };
     get assetConfigs(): {
         [uuid: string]: AssetConfig;
@@ -66,9 +66,9 @@ declare class AssetManagerClass {
     }): void;
     getAssetPath(uuid: string): string | undefined;
     registerAsset(asset: Object3D | AudioAsset | Material | Texture | AnimationClip): void;
-    loadAsset(uuid: string): Promise<AnimationClip | Object3D<import("three").Object3DEventMap> | Texture | Material | AudioAsset | undefined>;
+    loadAsset(uuid: string): Promise<Object3D<import("three").Object3DEventMap> | AnimationClip | Texture<unknown> | Material | AudioAsset | undefined>;
     private getExtension;
-    getAsset(uuid: string): AnimationClip | Object3D<import("three").Object3DEventMap> | Texture | Material | AudioAsset;
+    getAsset(uuid: string): Object3D<import("three").Object3DEventMap> | AnimationClip | Texture<unknown> | Material | AudioAsset;
     loadObject(assetPath: string): Promise<Object3D>;
     private loadObjectFunction;
     private loadNestedPrefabs;

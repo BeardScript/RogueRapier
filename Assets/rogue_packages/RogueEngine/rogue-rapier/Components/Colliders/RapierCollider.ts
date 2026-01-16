@@ -4,7 +4,8 @@ import * as THREE from 'three';
 import RogueRapier from '../../Lib/RogueRapier';
 import RapierBody from '../RapierBody.re';
 
-export default abstract class RapierCollider extends RE.Component {
+@RE.registerComponent
+export default class RapierCollider extends RE.Component {
   initialized = false;
   collider: RAPIER.Collider;
   body: RAPIER.RigidBody;

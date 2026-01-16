@@ -72,7 +72,7 @@ export default class Component extends Lifecycle {
     onObjectRemoved(): void;
     onDisabled(): void;
 }
-type ComponentInterfaceType = 'String' | 'Number' | 'Boolean' | 'Select' | 'Vector2' | 'Vector3' | 'Object3D' | 'Prefab' | 'Texture' | 'Material' | 'Component' | 'Audio' | 'Color' | 'PositionalAudio' | 'AnimationClip' | 'Button' | 'Data' | 'Code';
+type ComponentInterfaceType = 'String' | 'Number' | 'Boolean' | 'Select' | 'Vector2' | 'Vector3' | 'Object3D' | 'Prefab' | 'Texture' | 'Material' | 'Component' | 'Audio' | 'Color' | 'ColorString' | 'PositionalAudio' | 'AnimationClip' | 'Button' | 'Data' | 'Code';
 export type ComponentInterface = {
     [propName: string]: ComponentInterfaceType | {
         type: ComponentInterfaceType;

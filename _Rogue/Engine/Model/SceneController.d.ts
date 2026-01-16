@@ -11,7 +11,6 @@ export default abstract class SceneController extends Lifecycle {
     private _clock;
     private _onPlayCallbacks;
     private _onStopCallbacks;
-    private _throttledAdjustCameraAndRenderer;
     protected _scene: THREE.Scene;
     protected _containerId: string;
     protected _rogueDOMContainer: HTMLElement;

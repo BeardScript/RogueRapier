@@ -10,10 +10,11 @@ export declare function isActive(object: Object3D): boolean;
 export declare function setEnabled(object: Object3D, enabled: boolean): void;
 export declare function enable(object: Object3D): void;
 export declare function disable(object: Object3D): void;
-export declare function pick(targets: Object3D[]): Object3D | undefined;
+export declare function pick(targets: Object3D[]): THREE.Intersection<Object3D<THREE.Object3DEventMap>>[];
 export declare function getNormalizedDeviceCoordinates(x: number, y: number): {
     x: number;
     y: number;
 };
 export declare function getNearestWithTag(obj: Object3D, tag: string): Object3D | undefined;
 export declare function getNearestGroup(obj: Object3D): THREE.Group | undefined;
+export declare function randomRange(min: number, max: number, floor?: boolean): number;

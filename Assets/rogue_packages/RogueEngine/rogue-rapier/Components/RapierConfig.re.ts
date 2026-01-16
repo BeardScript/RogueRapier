@@ -93,7 +93,7 @@ export default class RapierConfig extends RE.Component {
       }
 
       if (bodyComp2  && col2.activeEvents() === RAPIER.ActiveEvents.COLLISION_EVENTS) {
-        const colInfo = {ownCollider: col1, otherCollider: col2, otherBody: bodyComp1 as RapierBody}
+        const colInfo = {ownCollider: col2, otherCollider: col1, otherBody: bodyComp1 as RapierBody}
         started ? bodyComp2.onCollisionStart(colInfo) : bodyComp2.onCollisionEnd(colInfo);
       }
     });

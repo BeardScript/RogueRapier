@@ -15,9 +15,9 @@ declare class Decorators {
     material(): typeof decoratorFunc;
     texture(): typeof decoratorFunc;
     object3d(): typeof decoratorFunc;
-    component<T extends Component>(componentClass: new (...args: any[]) => T, name?: string): typeof decoratorFunc;
+    component<T extends Component>(componentClass: (new (...args: any[]) => T) | string, name?: string): typeof decoratorFunc;
     audio(isPositional?: boolean): typeof decoratorFunc;
-    color(): typeof decoratorFunc;
+    color(asString?: boolean): typeof decoratorFunc;
     animation(): typeof decoratorFunc;
     button(): typeof decoratorFunc;
 }

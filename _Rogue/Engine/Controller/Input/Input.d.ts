@@ -18,21 +18,21 @@ type GamepadAxes = GamepadAxesObj | GamepadAxesArray;
 type KeyboardAxes = [up?: string, down?: string, left?: string, right?: string, mult?: [xMult: number, yMult: number]];
 type MouseAxes = [xMult: number, yMult: number];
 type TouchAxes = TouchAxesObj | TouchAxesArray;
-type InputAxesBinds = {
+export type InputAxesBinds = {
     type: "Axes";
     Keyboard?: KeyboardAxes;
     Mouse?: MouseAxes;
     Gamepad?: GamepadAxes;
     Touch?: TouchAxes;
 };
-type InputBinds = {
+export type InputBinds = {
     type: "Button";
     Keyboard?: string;
     Mouse?: number | "WheelUp" | "WheelDown";
     Gamepad?: number;
     Touch?: number | "Tap";
 };
-type InputAction = {
+export type InputAction = {
     [name: string]: InputAxesBinds | InputBinds;
 };
 type GamepadMapping = {
@@ -83,9 +83,11 @@ export declare abstract class Input {
     };
     static actionMap: InputAction;
     static inputMaps: InputMap;
+    static getDefaultActionMap(): InputAction;
     static setActionMap(bindings: InputAction): void;
     private static getGamepadKey;
     private static copyGamepadConfig;
+    static renameAction(actionName: string, newName: string): void;
     static bindAxes(actionName: string, bind: {
         Gamepad?: GamepadAxes;
         Keyboard?: KeyboardAxes;

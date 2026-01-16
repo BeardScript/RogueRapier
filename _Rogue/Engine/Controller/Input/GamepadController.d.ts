@@ -5,6 +5,15 @@ export declare class GamepadController {
     private _gamepad;
     deadZone: number;
     get gamepad(): Gamepad;
+    get downButtons(): {
+        [code: string]: boolean;
+    };
+    get pressedButtons(): {
+        [code: string]: boolean;
+    };
+    get upButtons(): {
+        [code: string]: boolean;
+    };
     constructor(gamepad: Gamepad);
     private update;
     getAxis(index: number): number;

@@ -11,12 +11,12 @@
   "license": "ISC",
   "dependencies": {
     "@dimforge/rapier3d-compat": "^0.14.0",
-    "@types/three": "^0.165.0",
+    "@types/three": "^0.182.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "glob": "7.1.6",
     "mkcert": "^1.4.0",
-    "three": "^0.165.0"
+    "three": "^0.182.0"
   },
   "devDependencies": {
     "cross-env": "^5.2.1",
